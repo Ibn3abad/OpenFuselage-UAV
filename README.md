@@ -1,45 +1,60 @@
 # OpenFuselage-UAV
 
-Dieses Repository enthält die Entwicklungsdaten, 3D-Modelle und Simulationen für ein **bahnbrechendes, neues Drohnen-Fuselage- und Airframe-Konzept**. Das Ziel dieses Open-Source-Projekts ist es, durch ein neuartiges aerodynamisches Design die Effizienz, Flugzeit und Stabilität von unbemannten Luftfahrzeugen (UAVs) drastisch zu verbessern.
+This repository contains the development data, 3D models, and simulations for a **groundbreaking, novel drone fuselage and airframe concept**. The goal of this open-source project is to drastically improve the efficiency, flight time, and stability of unmanned aerial vehicles (UAVs) through a revolutionary aerodynamic design.
 
 ---
 
-## 🚀 Das Konzept: Aerodynamische Revolution
+## 🦅 The Philosophy: Why are we still building aircraft like it's 1900?
 
-Klassische Multicopter-Rahmen sind oft aerodynamisch ineffizient und erzeugen bei Vorwärtsfahrt hohen Luftwiderstand. Dieses Projekt bricht mit traditionellen Designs:
-- **Neuartiges Rumpfdesign (Fuselage):** Minimierung des Luftwiderstands bei hohen Geschwindigkeiten.
-- **Aktive Aerodynamik / Strömungsoptimierung:** Nutzung des Luftstroms zur Generierung von zusätzlichem Auftrieb oder zur Stabilisierung, ohne die Motoren extra zu belasten.
-- **Modulares Frame-Design:** Leichtgewichtig, robust und optimiert für den 3D-Druck oder die CNC-Fräsung.
+For over a century, aviation has followed the exact same blueprint: a heavy fuselage equipped with rigid control surfaces and mechanical tail units (vertical and horizontal stabilizers) at the rear. This architecture was necessary when human pilots had slower reaction times and aircraft required inherent aerodynamic self-stability to remain airborne. 
 
----
-
-## 💻 Software & Ökosystem
-
-Wir erfinden das Rad nicht neu, sondern bauen auf dem verlässlichsten Industriestandard auf:
-- **Firmware:** Das Projekt basiert vollständig auf **[ArduPilot](https://ardupilot.org/)** (ArduCopter/ArduPlane). Wir nutzen die mächtige Sensorfusion (EKF3) und die flexiblen Tuning-Möglichkeiten von ArduPilot, um die neuen aerodynamischen Eigenschaften optimal zu regeln.
-- **Anpassungen:** Im Repository werden spezifische Parameter-Dateien (`.param`) und ggf. Custom-Code-Erweiterungen für ArduPilot bereitgestellt, die auf dieses spezielle Airframe-Verhalten abgestimmt sind.
+**OpenFuselage-UAV breaks away from this century-old dogma.** Our vision is to create a bio-inspired airframe that moves through the air just like a **bird**—**completely without traditional tail rudders**. Birds do not have rigid tails; instead, they rely on dynamic geometry adjustments (wing morphing) and highly agile, inherently unstable aerodynamics. Thanks to modern flight controllers and embedded software, we can finally bring this evolutionary perfection to UAVs.
 
 ---
 
-## 🕹️ Simulation (SITL)
+## 🚀 The Concept: Aerodynamic Revolution
 
-Da echte Prototypen-Abstürze teuer sind, setzen wir voll auf Simulationen. Um den Einstieg für Entwickler so einfach wie möglich zu gestalten, nutzen wir **Webots** als primäre Simulationsumgebung.
-
-Unter den großen Plattformen (Gazebo / Webots / O3DE) wurde **Webots** bewusst gewählt, weil es:
-1. Die **einfachste und leichtgewichtigste** Installation und Konfiguration bietet.
-2. Hervorragende Out-of-the-Box-Physik für Propeller und aerodynamische Körper besitzt.
-3. Perfekt mit dem ArduPilot SITL (Software-in-the-Loop) gekoppelt werden kann.
+By eliminating the tail assembly, we drastically reduce both weight and parasitic drag. The system is built upon three main pillars:
+- **Fluid Fuselage Design:** Maximizing aerodynamic efficiency by ensuring the entire body contributes positively to the aircraft's lift and performance.
+- **Rudderless Stabilization (Tailless Design):** Controlling the pitch and roll axes through combined wing elements (elevons) and, in the long term, flexible wing-warping (morphing wings).
+- **Active Software Control Surfaces:** Utilizing differential thrust or thrust-vectoring mechanisms to purely dynamically replace the traditional yaw axis (rudder).
 
 ---
 
-## 📂 Repository-Struktur & CAD-Modelle
+## 💻 Software & Ecosystem
 
-Die aktuelle CAD-Entwicklung findet Cloud-basiert statt. Das interaktive 3D-Modell kann direkt im Browser eingesehen werden:
-👉 **[OpenFuselage-UAV auf Onshape ansehen](https://cad.onshape.com/documents/8b250d0c03d7a3b609c8d7fb/w/4129f33a8aafaadd1a6fb501/e/e16a9e18ad5e6c49e04cec56)**
+Since a tailless, bird-like design is inherently unstable from an aerodynamic standpoint, the software takes on the role of the biological nervous system:
+- **Firmware:** The project relies entirely on **[ArduPilot](https://ardupilot.org/)** (ArduCopter/ArduPlane). 
+- **Sensor Fusion as a Stabilizer:** We leverage the ultra-fast **EKF3 (Extended Kalman Filter)** and high-dynamic PID control loops of ArduPilot. The software corrects instabilities hundreds of times per second in real time—exactly how a falcon's brain constantly self-adjusts microscopically against the wind.
+- **Configurations:** The repository provides custom parameter files (`.param`) tailored specifically to tune ArduPilot for this highly agile airframe behavior.
+
+---
+
+## 🛠️ The Engineering Toolchain (Simulation & Analysis)
+
+To develop an inherently unstable, rudderless aircraft safely and efficiently, we utilize a two-stage digital design process:
+
+### 1. Aerodynamic Validation & Geometry (OpenVSP)
+Before writing code or exporting manufacturing files, the airframe is modeled and validated using **NASA's OpenVSP (Vehicle Sketch Pad)**. 
+* We use OpenVSP's **Vortex Lattice Method (VLM)** to calculate lift, drag, and stability derivatives.
+* This allows us to precisely find the **Neutral Point (Aerodynamic Center)** and optimize the fuselage geometry to ensure the body generates actual lift without relying on a tail.
+
+### 2. Physics & Flight Control Simulation (Webots + ArduPilot SITL)
+Once the geometry is verified, the model is brought into **Webots** for real-time dynamic simulation.
+* **Webots** calculates aerodynamic and physical forces directly onto body surfaces, making it ideal for testing a tailless design.
+* It is seamlessly coupled with **ArduPilot SITL (Software-in-the-Loop)** to virtually flight-test our control loops, tune PID values, and benchmark differential thrust behaviors before any hardware is built.
+
+---
+
+## 📂 Repository Structure & CAD Models
+
+The mechanical CAD development is cloud-based. You can view and inspect the interactive 3D model directly in your browser:
+👉 **[View OpenFuselage-UAV on Onshape](https://cad.onshape.com/documents/8b250d0c03d7a3b609c8d7fb/w/4129f33a8aafaadd1a6fb501/e/e16a9e18ad5e6c49e04cec56)**
 
 ```text
-├── mechanical/            # Lokale Exporte der 3D-CAD-Modelle (STEP, STL)
-├── simulation/            # Webots-Welten und Drohnen-Modelle (PROTO-Dateien)
-├── config/                # ArduPilot Parameter-Dateien (.param) für das Tuning
-├── docs/                  # Aerodynamische Analysen, Berechnungen und Testergebnisse
-└── README.md              # Diese Datei
+├── mechanical/            # Local exports of 3D CAD models (STEP, STL)
+├── openvsp/               # OpenVSP (.vsp3) models and VLM aero-analysis data
+├── simulation/            # Webots worlds and drone models (PROTO files)
+├── config/                # ArduPilot parameter files (.param) for tuning
+├── docs/                  # Calculations, research papers, and test results
+└── README.md              # This file
