@@ -32,29 +32,14 @@ Unter den großen Plattformen (Gazebo / Webots / O3DE) wurde **Webots** bewusst 
 
 ---
 
-## 📂 Repository-Struktur
+## 📂 Repository-Struktur & CAD-Modelle
+
+Die aktuelle CAD-Entwicklung findet Cloud-basiert statt. Das interaktive 3D-Modell kann direkt im Browser eingesehen werden:
+👉 **[OpenFuselage-UAV auf Onshape ansehen](https://cad.onshape.com/documents/8b250d0c03d7a3b609c8d7fb/w/4129f33a8aafaadd1a6fb501/e/e16a9e18ad5e6c49e04cec56)**
 
 ```text
-├── mechanical/            # 3D-CAD-Modelle (STEP, STL) für den Rahmen
+├── mechanical/            # Lokale Exporte der 3D-CAD-Modelle (STEP, STL)
 ├── simulation/            # Webots-Welten und Drohnen-Modelle (PROTO-Dateien)
 ├── config/                # ArduPilot Parameter-Dateien (.param) für das Tuning
 ├── docs/                  # Aerodynamische Analysen, Berechnungen und Testergebnisse
 └── README.md              # Diese Datei
-```
-
----
-
-## 🛠️ Mitmachen & Beitragen
-
-Dieses Projekt lebt von der Community! Egal ob du Experte für Aerodynamik (CFD-Simulationen), Embedded-Entwickler für ArduPilot oder begeistert von 3D-Druck bist – jede Hilfe ist willkommen.
-
-1. **Forke** das Repository.
-2. Erstelle einen neuen Branch (`git checkout -b feature/NeuesFeature`).
-3. Teste deine Änderungen in der **Webots-Simulation**.
-4. Öffne einen **Pull Request**.
-
----
-
-## 📄 Lizenz
-
-Dieses Projekt ist unter der **GPL v3** lizenziert. Das bedeutet, dass alle Modifikationen und Weiterentwicklungen dieses Airframes ebenfalls als Open Source veröffentlicht werden müssen. Schützen wir gemeinsam die offene Entwicklung!
