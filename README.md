@@ -2,6 +2,9 @@
 
 This repository contains the development data, 3D models, and simulations for a **groundbreaking, novel drone fuselage and airframe concept**. The goal of this open-source project is to drastically improve the efficiency, flight time, and stability of unmanned aerial vehicles (UAVs) through a revolutionary aerodynamic design.
 
+<img width="704" height="384" alt="ArduPilot" src="https://github.com/user-attachments/assets/744ed0db-a217-4f36-a0a1-4e135fda0ce0" />
+
+
 ---
 
 ## 🦅 The Philosophy: Why are we still building aircraft like it's 1900?
