@@ -127,6 +127,8 @@ The project follows a clear engineering roadmap.
 - Develop the flight controller.
 - Tune the control algorithms.
 - Verify stable fuselage rotation using only elevons.
+- 
+<img width="1408" height="768" alt="Explination" src="https://github.com/user-attachments/assets/a248fbc0-f8dd-46f6-a2ea-2cd7d433fef7" />
 
 **Phase 2**
 
@@ -170,7 +172,4 @@ The long-term objective of OpenFuselage-UAV is to create a tailless aircraft wit
 Each development phase builds upon the previous one, allowing the project to evolve from a simple proof of concept into a fully motorized rotating-fuselage UAV.
 
 
-<img width="1408" height="768" alt="Explination" src="https://github.com/user-attachments/assets/a248fbc0-f8dd-46f6-a2ea-2cd7d433fef7" />
-
-<img width="1408" height="768" alt="ArduPilot" src="https://github.com/user-attachments/assets/2b87135e-b744-4bee-bcab-80360c280087" />
 
