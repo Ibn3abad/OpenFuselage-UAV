@@ -127,8 +127,8 @@ The project follows a clear engineering roadmap.
 - Develop the flight controller.
 - Tune the control algorithms.
 - Verify stable fuselage rotation using only elevons.
-- 
-<img width="1408" height="768" alt="Explination" src="https://github.com/user-attachments/assets/a248fbc0-f8dd-46f6-a2ea-2cd7d433fef7" />
+
+<img width="1222" height="864" alt="Phase 1" src="https://github.com/user-attachments/assets/764af707-e46d-4c34-a568-bfe4004f16c0" />
 
 **Phase 2**
 
@@ -137,6 +137,10 @@ The project follows a clear engineering roadmap.
 - Optimize the mechanical design.
 - Rebalance the aircraft's mass distribution.
 - Improve efficiency and flight performance.
+
+
+<img width="1222" height="864" alt="Phase 2" src="https://github.com/user-attachments/assets/af076588-ea8d-4b43-8808-67938dc23439" />
+
 
 ---
 
