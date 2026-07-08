@@ -15,7 +15,7 @@ This guide explains how to set up a local **ArduPilot** development environment 
 First, fork the official ArduPilot repository on GitHub, then clone your fork together with all required submodules.
 
 ```bash
-git clone --recurse-submodules https://github.com/YOUR-USERNAME/ardupilot.git
+git clone --recurse-submodules https://github.com/ArduPilot/ardupilot.git
 cd ardupilot
 ```
 
