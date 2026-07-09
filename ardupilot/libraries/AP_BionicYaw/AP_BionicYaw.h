@@ -20,6 +20,7 @@
    along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "AP_BionicYaw_config.h"
 #include <AP_Math/AP_Math.h>
 #include <AP_Param/AP_Param.h>
 
@@ -56,4 +57,5 @@ private:
     AP_Float _yaw_gain;
     AP_Float _roll_gain;
     AP_Float _pitch_gain;
+    AP_Int8 _enabled; // 1 = aktiv, 0 = deaktiviert
 };

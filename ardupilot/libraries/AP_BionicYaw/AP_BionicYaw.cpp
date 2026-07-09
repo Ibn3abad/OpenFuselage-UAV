@@ -61,6 +61,13 @@ AP_BionicYaw::Output AP_BionicYaw::update(float roll,
 {
     Output out;
 
+    if (_enabled <= 0) {
+        // Fallback auf Standard-Mischung
+        out.left = pitch + yaw;
+        out.right = pitch - yaw;
+        return out;
+    }
+
     const float pitch_cmd = pitch * _pitch_gain;
     const float yaw_cmd   = yaw * _yaw_gain;
     const float roll_cmd  = roll * _roll_gain;
