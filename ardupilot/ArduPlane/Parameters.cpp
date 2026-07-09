@@ -1290,7 +1290,7 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
     AP_GROUPINFO("RNGFND_LND_DIST", 41, ParametersG2, rangefinder_land_engage_dist_m, 0),
 #endif
 
-#if AC_BIONICYAW_ENABLED
+#if AP_BIONICYAW_ENABLED
     // @Group: BYAW_
     // @Path: ../libraries/AP_BionicYaw/AP_BionicYaw.cpp
     AP_SUBGROUPINFO(bionicyaw, "BYAW_", 42, ParametersG2, AP_BionicYaw),

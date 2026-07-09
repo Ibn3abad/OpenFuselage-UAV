@@ -3,6 +3,11 @@
 #define AP_PARAM_VEHICLE_NAME plane
 
 #include <AP_Common/AP_Common.h>
+#include <AP_BionicYaw/AP_BionicYaw_config.h>
+
+#if AP_BIONICYAW_ENABLED
+#include <AP_BionicYaw/AP_BionicYaw.h>
+#endif
 
 // Global parameter class.
 //
@@ -529,9 +534,10 @@ public:
     AC_PrecLand precland;
 #endif
 
-#if AC_BIONICYAW_ENABLED
+#if AP_BIONICYAW_ENABLED
     AP_BionicYaw bionicyaw;
 #endif
+
     // crow flaps weighting
     AP_Int8 crow_flap_weight_outer;
     AP_Int8 crow_flap_weight_inner;

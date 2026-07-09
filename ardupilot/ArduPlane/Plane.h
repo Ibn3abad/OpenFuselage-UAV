@@ -88,10 +88,6 @@
 #include "AP_ExternalControl_Plane.h"
 #endif
 
-#if AC_BIONICYAW_ENABLED
-#include <AP_BionicYaw/AP_BionicYaw.h>
-#endif
-
 
 
 #include <AC_PrecLand/AC_PrecLand_config.h>
@@ -287,10 +283,6 @@ private:
 #if HAL_RALLY_ENABLED
     // Rally Points
     AP_Rally rally;
-#endif
-
-#if AC_BIONICYAW_ENABLED
-    AP_BionicYaw bionic_yaw;
 #endif
 
 #if AC_PRECLAND_ENABLED
@@ -1198,20 +1190,7 @@ private:
     void update_throttle_hover();
     void channel_function_mixer(SRV_Channel::Function func1_in, SRV_Channel::Function func2_in,
                                 SRV_Channel::Function func1_out, SRV_Channel::Function func2_out) const;
-    // --- BionicYaw additions -------------------------------------------
-    // Synchronizes both tail-half surfaces to a single pitch demand.
-    // Used instead of channel_function_mixer()'s differential V-tail
-    // math, since yaw on this airframe comes from the mechanical tail
-    // rotation actuator, not from aerodynamic differential deflection.
-    void bionicyaw_tail_sync_mixer(SRV_Channel::Function pitch_in,
-                                    SRV_Channel::Function tail_left_out,
-                                    SRV_Channel::Function tail_right_out) const;
-
-    // Passes the standard rudder demand straight through to the
-    // mechanical tail-rotation actuator. Documents in code that this
-    // actuator *is* the yaw control surface for this airframe.
-    void bionicyaw_rotation_actuator_update(void) const;
-    // ---------------------------------------------------------------
+    
     void flaperon_update();
     void indicate_waiting_for_rud_neutral_to_takeoff(void);
 

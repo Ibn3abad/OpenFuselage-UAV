@@ -1029,10 +1029,45 @@ void Plane::servos_output(void)
     // support twin-engine aircraft
     servos_twin_engine_mix();
 
-    // run vtail and elevon mixers
-    channel_function_mixer(SRV_Channel::k_aileron, SRV_Channel::k_elevator, SRV_Channel::k_elevon_left, SRV_Channel::k_elevon_right);
-    channel_function_mixer(SRV_Channel::k_rudder,  SRV_Channel::k_elevator, SRV_Channel::k_vtail_right, SRV_Channel::k_vtail_left);
+#if AP_BIONICYAW_ENABLED
+    // Read the current scaled outputs for aileron, elevator, and rudder.
+    // These values are calculated by the control loops (e.g., stabilize()).
+    float roll_cd = SRV_Channels::get_output_scaled(SRV_Channel::k_aileron);
+    float pitch_cd = SRV_Channels::get_output_scaled(SRV_Channel::k_elevator);
+    float yaw_cd = SRV_Channels::get_output_scaled(SRV_Channel::k_rudder);
 
+    // Call the update method of the BionicYaw class.
+    // Parameters are expected in centidegrees (° * 100), as is common in ArduPilot.
+    AP_BionicYaw::Output bionic_output = plane.bionicyaw.update(roll_cd, pitch_cd, yaw_cd);
+
+    // Override the original rudder/aileron outputs with the biomimetic values.
+    // This only affects the V-tail channels (k_vtail_left/right).
+    // If a V-tail is not used but the function is called, the values should be ignored.
+    // However, it is safer to only set them if a V-tail is actually configured.
+    if (SRV_Channels::function_assigned(SRV_Channel::k_vtail_left) &&
+        SRV_Channels::function_assigned(SRV_Channel::k_vtail_right)) {
+        SRV_Channels::set_output_scaled(SRV_Channel::k_vtail_left, bionic_output.left);
+        SRV_Channels::set_output_scaled(SRV_Channel::k_vtail_right, bionic_output.right);
+    } else {
+        // Fallback: If no V-tail is present but the mixer is enabled,
+        // one could theoretically map these values to the standard rudder/aileron channels.
+        // However, this should be avoided to prevent unexpected behavior.
+        // Therefore, we do nothing here.
+    }
+#endif
+
+    // Run vtail and elevon mixers
+    channel_function_mixer(SRV_Channel::k_aileron, SRV_Channel::k_elevator, SRV_Channel::k_elevon_left, SRV_Channel::k_elevon_right);
+
+    // ATTENTION: The original channel_function_mixer for k_vtail must be DISABLED,
+    // otherwise the BionicYaw values will be overwritten!
+    // This can be achieved either via a condition or by commenting out the call.
+    
+    // The call for the V-tail must be removed or executed conditionally:
+    if (!AP_BIONICYAW_ENABLED) { // Only execute if BionicYaw is DISABLED
+        channel_function_mixer(SRV_Channel::k_rudder,  SRV_Channel::k_elevator, SRV_Channel::k_vtail_right, SRV_Channel::k_vtail_left);
+    }
+    
 #if HAL_QUADPLANE_ENABLED
     // cope with tailsitters and bicopters
     quadplane.tailsitter.output();
@@ -1163,32 +1198,4 @@ void Plane::servos_auto_trim(void)
 }
 
 
-/*
-  Called once from Plane's servo setup / init sequence (e.g. from
-  Plane::init_ardupilot() or an equivalent one-time setup point),
-  so gains only need to be pushed once unless changed at runtime via
-  AP_Param.
-*/
-void Plane::bionicyaw_init(void)
-{
-    bionic_yaw.set_gains(g2.bionicyaw_yaw_gain,
-                          g2.bionicyaw_roll_gain,
-                          g2.bionicyaw_pitch_gain);
-}
 
-/*
-  Called every servo-output cycle from Plane::set_servos(), in the
-  same place the stock channel_function_mixer() call for VTail
-  currently sits.
-*/
-void Plane::bionicyaw_update(void)
-{
-    const float roll_demand  = SRV_Channels::get_output_scaled(SRV_Channel::k_aileron);
-    const float pitch_demand = SRV_Channels::get_output_scaled(SRV_Channel::k_elevator);
-    const float yaw_demand   = SRV_Channels::get_output_scaled(SRV_Channel::k_rudder);
-
-    const AP_BionicYaw::Output out = bionic_yaw.update(roll_demand, pitch_demand, yaw_demand);
-
-    SRV_Channels::set_output_scaled(SRV_Channel::k_vtail_left,  out.left);
-    SRV_Channels::set_output_scaled(SRV_Channel::k_vtail_right, out.right);
-}
