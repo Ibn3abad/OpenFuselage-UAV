@@ -206,6 +206,8 @@ Connect Webots
           ▼
 Flight Testing
 ```
+Working
+<img width="1918" height="1073" alt="Screenshot from 2026-07-09 09-52-04" src="https://github.com/user-attachments/assets/a30dedc8-2237-40d3-9bba-39ce66266b95" />
 
 ---
 
