@@ -24,6 +24,33 @@ By eliminating the tail assembly, we drastically reduce both weight and parasiti
 
 ---
 
+## 🐦 Development Roadmap: From Bird-Inspired Control to Full Biomimicry
+
+The control concept of this airframe is being developed in incremental phases, each one moving closer to how a real bird actually flies. Every phase replaces one more "rigid aircraft" convention with a biologically inspired mechanism.
+
+### Phase 1 — Shallow V-Tail (Ruddervator)
+A fixed, shallow V-tail provides pitch control, with limited yaw authority through differential ("ruddervator") deflection of the two tail halves. This is the traditional, aerodynamics-only approach to a tailless-adjacent design — simple to implement, but geometrically limited: yaw effectiveness of a V-tail surface scales roughly with `sin(dihedral angle)`, so a *shallow* V-tail (chosen here for low drag and a bird-like silhouette) inherently has weak yaw authority.
+
+### Phase 2 — Rotating Tail Assembly (Mechanical Yaw)
+Rather than fighting the shallow V-tail's weak aerodynamic yaw authority, Phase 2 mirrors how a bird actually generates yaw: **a bird rotates its entire tail fan around its body axis** to redirect aerodynamic force, rather than deflecting a single fixed rudder flap.
+
+We replicate this directly: the whole tail assembly is mounted on a dedicated actuator that physically **rotates the tail unit around the fuselage's longitudinal axis**. This actuator is wired to ArduPilot's standard `Rudder` output function, so the flight controller's yaw demand drives the rotation mechanically — the autopilot doesn't need to know that a rotating assembly, rather than a flap, produces the yawing moment. Pitch remains controlled by both tail halves deflecting **together** as a synchronized elevator.
+
+This decouples pitch and yaw authority mechanically instead of blending them aerodynamically, which is exactly why a shallow, low-drag V-tail becomes viable in the first place.
+
+### Phase 3 — Dynamic Center-of-Gravity Shift (Future Work)
+Looking further ahead, birds don't just move their tails — they continuously shift their **body mass distribution** (via wing position, neck extension, and posture) to trim and steer with almost no aerodynamic drag penalty. A shifting center of gravity is one of the most efficient control mechanisms in nature, and historically it's also how the very earliest human gliders (e.g. Otto Lilienthal's weight-shift hang gliders) were controlled.
+
+For a powered fixed-wing UAV, this is intentionally listed as **future work rather than a near-term goal**, because it comes with a fundamental engineering trade-off:
+
+- **Effectiveness scales with `mass × displacement distance`**, not mass alone — on a small UAV, the achievable lever arm is short, so a mass-shift mechanism needs either a heavier shifting mass or a longer travel path to produce a meaningful moment.
+- **The mechanism itself adds weight** (rails, motor, shifting mass carrier), which works directly against one of this project's core goals: minimizing weight and drag.
+- Unlike control surfaces or a rotating tail, a mass-shift system reacts relatively **slowly**, making it better suited as a **trim/efficiency aid** (e.g. shifting CG slightly rearward in cruise to reduce trim drag) than as a primary, fast-reacting control axis.
+
+The current plan for Phase 3 is therefore a **hybrid approach**: keep the rotating tail (Phase 2) as the primary, fast yaw actuator, and introduce a small, slow CG-shift mechanism purely as a cruise-efficiency trim aid — closer to how a soaring bird subtly repositions its body for efficiency, while still using its tail for active, fast maneuvering.
+
+---
+
 ## 💻 Software & Ecosystem
 
 Since a tailless, bird-like design is inherently unstable from an aerodynamic standpoint, the software takes on the role of the biological nervous system:
