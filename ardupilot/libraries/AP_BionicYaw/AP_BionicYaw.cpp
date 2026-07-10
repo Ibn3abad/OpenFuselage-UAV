@@ -2,7 +2,7 @@
    BionicYaw
    Biomimetic tail mixer for ArduPilot
 
-   Copyright (C) 2026 Your Name
+   Copyright (C) 2026 Abderrahim KHOUK
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -50,6 +50,28 @@ const AP_Param::GroupInfo AP_BionicYaw::var_info[] = {
     // @User: Standard
     AP_GROUPINFO("PITCH_GAIN", 3, AP_BionicYaw, _pitch_gain, 1.00f),
 
+    // @Param: MODE
+    // @DisplayName: BionicYaw tail actuation mode
+    // @Description: 0 selects the differential VTail mixer (two flat tail surfaces, YAW/ROLL/PITCH_GAIN apply). 1 selects the rotating tail-boom actuator (single servo rotates the whole tail, ROT_MAX/ROT_FN apply instead).
+    // @Values: 0:DifferentialVTail,1:RotatingTail
+    // @User: Standard
+    AP_GROUPINFO("MODE", 4, AP_BionicYaw, _mode, 0),
+
+    // @Param: ROT_MAX
+    // @DisplayName: BionicYaw rotator max deflection
+    // @Description: Maximum rotation of the tail-boom actuator in ROTATING_TAIL mode, in either direction. Full rudder stick deflection (45 deg / 4500 centidegrees) maps to this value.
+    // @Range: 0.0 45.0
+    // @Units: deg
+    // @User: Standard
+    AP_GROUPINFO("ROT_MAX", 5, AP_BionicYaw, _rot_max_deg, 45.0f),
+
+    // @Param: ROT_FN
+    // @DisplayName: BionicYaw rotator scripting output
+    // @Description: Selects which Scripting servo output (SERVOx_FUNCTION = ScriptingN) drives the rotating tail-boom actuator in ROTATING_TAIL mode. A value of 1 uses Scripting1, 2 uses Scripting2, and so on up to 16.
+    // @Range: 1 16
+    // @User: Standard
+    AP_GROUPINFO("ROT_FN", 6, AP_BionicYaw, _rot_fn, 1),
+
     AP_GROUPEND
 };
 
@@ -93,4 +115,21 @@ AP_BionicYaw::Output AP_BionicYaw::update(float roll,
     out.right = constrain_float(out.right, -4500.0f, 4500.0f);
 
     return out;
+}
+
+float AP_BionicYaw::update_rotator(float yaw) const
+{
+    if (_enabled <= 0) {
+        // disabled: hold the actuator centered rather than driving
+        // it, so a disabled BionicYaw doesn't leave the tail cocked
+        // at some arbitrary angle
+        return 0.0f;
+    }
+
+    // BYAW_ROT_MAX is in whole degrees, convert to the same
+    // centidegree "angle" scale k_scriptingN outputs use
+    // (set_angle(4500) == +/-45.00 deg, matching k_rudder).
+    const float max_cd = constrain_float(_rot_max_deg, 0.0f, 45.0f) * 100.0f;
+
+    return constrain_float(yaw, -max_cd, max_cd);
 }
