@@ -1029,45 +1029,20 @@ void Plane::servos_output(void)
     // support twin-engine aircraft
     servos_twin_engine_mix();
 
-#if AP_BIONICYAW_ENABLED
-    // Read the current scaled outputs for aileron, elevator, and rudder.
-    // These values are calculated by the control loops (e.g., stabilize()).
-    float roll_cd = SRV_Channels::get_output_scaled(SRV_Channel::k_aileron);
-    float pitch_cd = SRV_Channels::get_output_scaled(SRV_Channel::k_elevator);
-    float yaw_cd = SRV_Channels::get_output_scaled(SRV_Channel::k_rudder);
-
-    // Call the update method of the BionicYaw class.
-    // Parameters are expected in centidegrees (° * 100), as is common in ArduPilot.
-    AP_BionicYaw::Output bionic_output = plane.bionicyaw.update(roll_cd, pitch_cd, yaw_cd);
-
-    // Override the original rudder/aileron outputs with the biomimetic values.
-    // This only affects the V-tail channels (k_vtail_left/right).
-    // If a V-tail is not used but the function is called, the values should be ignored.
-    // However, it is safer to only set them if a V-tail is actually configured.
-    if (SRV_Channels::function_assigned(SRV_Channel::k_vtail_left) &&
-        SRV_Channels::function_assigned(SRV_Channel::k_vtail_right)) {
-        SRV_Channels::set_output_scaled(SRV_Channel::k_vtail_left, bionic_output.left);
-        SRV_Channels::set_output_scaled(SRV_Channel::k_vtail_right, bionic_output.right);
-    } else {
-        // Fallback: If no V-tail is present but the mixer is enabled,
-        // one could theoretically map these values to the standard rudder/aileron channels.
-        // However, this should be avoided to prevent unexpected behavior.
-        // Therefore, we do nothing here.
-    }
-#endif
-
     // Run vtail and elevon mixers
     channel_function_mixer(SRV_Channel::k_aileron, SRV_Channel::k_elevator, SRV_Channel::k_elevon_left, SRV_Channel::k_elevon_right);
 
-    // ATTENTION: The original channel_function_mixer for k_vtail must be DISABLED,
-    // otherwise the BionicYaw values will be overwritten!
-    // This can be achieved either via a condition or by commenting out the call.
-    
-    // The call for the V-tail must be removed or executed conditionally:
-    if (!AP_BIONICYAW_ENABLED) { // Only execute if BionicYaw is DISABLED
-        channel_function_mixer(SRV_Channel::k_rudder,  SRV_Channel::k_elevator, SRV_Channel::k_vtail_right, SRV_Channel::k_vtail_left);
-    }
-    
+#if AP_BIONICYAW_ENABLED
+    // BionicYaw replaces the standard VTail channel_function_mixer()
+    // call below with a differential mixer that also adds a
+    // turn-coordination roll assist. If BYAW_ENABLE is 0 at runtime,
+    // AP_BionicYaw::update() itself falls back to a plain pitch+/-yaw
+    // mix, so k_vtail_left/right are always driven either way.
+    bionicyaw_update();
+#else
+    channel_function_mixer(SRV_Channel::k_rudder,  SRV_Channel::k_elevator, SRV_Channel::k_vtail_right, SRV_Channel::k_vtail_left);
+#endif
+
 #if HAL_QUADPLANE_ENABLED
     // cope with tailsitters and bicopters
     quadplane.tailsitter.output();
@@ -1103,6 +1078,35 @@ void Plane::servos_output(void)
         servos_auto_trim();
     }
 }
+
+#if AP_BIONICYAW_ENABLED
+/*
+  BionicYaw differential tail mixer, called from servos_output() in
+  place of the standard VTail channel_function_mixer() call for
+  k_vtail_left/k_vtail_right. Reads the same scaled aileron/elevator/
+  rudder demands the standard mixer would use, runs them through
+  AP_BionicYaw::update() (which itself falls back to a plain
+  pitch+/-yaw mix if BYAW_ENABLE is 0), and writes the result to the
+  V-tail channels.
+*/
+void Plane::bionicyaw_update(void)
+{
+    if (!SRV_Channels::function_assigned(SRV_Channel::k_vtail_left) ||
+        !SRV_Channels::function_assigned(SRV_Channel::k_vtail_right)) {
+        // no V-tail configured, nothing to mix onto
+        return;
+    }
+
+    const float roll_cd  = SRV_Channels::get_output_scaled(SRV_Channel::k_aileron);
+    const float pitch_cd = SRV_Channels::get_output_scaled(SRV_Channel::k_elevator);
+    const float yaw_cd   = SRV_Channels::get_output_scaled(SRV_Channel::k_rudder);
+
+    const AP_BionicYaw::Output out = g2.bionicyaw.update(roll_cd, pitch_cd, yaw_cd);
+
+    SRV_Channels::set_output_scaled(SRV_Channel::k_vtail_left,  out.left);
+    SRV_Channels::set_output_scaled(SRV_Channel::k_vtail_right, out.right);
+}
+#endif  // AP_BIONICYAW_ENABLED
 
 void Plane::update_throttle_hover() {
     // update hover throttle at 100Hz
