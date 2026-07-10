@@ -22,6 +22,13 @@
 
 const AP_Param::GroupInfo AP_BionicYaw::var_info[] = {
 
+    // @Param: ENABLE
+    // @DisplayName: BionicYaw enable
+    // @Description: Enables the BionicYaw differential/turn-coordination tail mixer. When disabled, a plain pitch+/-yaw VTail mix is used instead.
+    // @Values: 0:Disabled,1:Enabled
+    // @User: Standard
+    AP_GROUPINFO_FLAGS("ENABLE", 0, AP_BionicYaw, _enabled, 1, AP_PARAM_FLAG_ENABLE),
+
     // @Param: YAW_GAIN
     // @DisplayName: BionicYaw yaw mixing gain
     // @Description: Amount of yaw demand mixed differentially into the tail surfaces.
