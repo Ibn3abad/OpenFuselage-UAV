@@ -1,0 +1,67 @@
+# =============================================================
+# OpenFuselage-UAV Phase 2: Rotating Tail Test-Parameter
+# Voraussetzung: rotating_tail_mixer.lua liegt in scripts/
+# =============================================================
+
+# -------------------------------------------------------------
+# Lua Scripting aktivieren
+# -------------------------------------------------------------
+SCR_ENABLE,1
+SCR_VM_I_COUNT,20000    # ggf. erhöhen falls Skript zu komplex wird
+SCR_HEAP_SIZE,102400
+
+# -------------------------------------------------------------
+# Servo-Zuordnung: physische Kanäle auf Scripting-Funktionen
+# -------------------------------------------------------------
+# Kanal 2: linke Tail-Fläche
+SERVO2_FUNCTION,94      # Scripting1
+SERVO2_MIN,1100
+SERVO2_MAX,1900
+SERVO2_TRIM,1500
+
+# Kanal 4: rechte Tail-Fläche
+SERVO4_FUNCTION,95      # Scripting2
+SERVO4_MIN,1100
+SERVO4_MAX,1900
+SERVO4_TRIM,1500
+
+# Kanal 6: Rotationsservo der gesamten Tail-Einheit
+SERVO6_FUNCTION,96      # Scripting3
+SERVO6_MIN,1100
+SERVO6_MAX,1900
+SERVO6_TRIM,1500
+
+# Querruder unverändert
+SERVO1_FUNCTION,4
+SERVO1_REVERSED,0
+SERVO5_FUNCTION,4
+SERVO5_REVERSED,1
+
+# Throttle
+SERVO3_FUNCTION,3
+
+# -------------------------------------------------------------
+# WICHTIG: Elevator/Rudder NICHT auf physische Kanäle legen!
+# Das Skript liest die internen Demand-Werte trotzdem aus.
+# -------------------------------------------------------------
+# (kein SERVOx_FUNCTION = 19 oder 21 gesetzt)
+
+# -------------------------------------------------------------
+# Aux-Kanal für Ziel-Rotationswinkel der Tail-Einheit
+# (Kanal 7 = Poti/Slider am Sender, im Skript als TAIL_ROT_CH)
+# -------------------------------------------------------------
+RC7_OPTION,0            # kein Standard-Auxfunction, wird nur vom Skript gelesen
+
+# -------------------------------------------------------------
+# Flugmodi für Test
+# -------------------------------------------------------------
+FLTMODE_CH,5
+FLTMODE1,0     # MANUAL
+FLTMODE2,5     # FBWA
+FLTMODE3,6     # STABILIZE
+FLTMODE4,10    # AUTO
+FLTMODE5,11    # RTL
+FLTMODE6,0
+
+# NUR für SITL-Tests, nicht für Realflug!
+ARMING_CHECK,0
