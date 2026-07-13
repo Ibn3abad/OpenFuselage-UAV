@@ -1,0 +1,96 @@
+# =============================================================
+# OpenFuselage-UAV - Phase 3.1/3.2 Parameter
+# Rotierender Tail-Boom (ROTATING_TAIL) + Pitch-/Roll-Kompensation
+#
+# Gehoert zu: libraries/AP_BionicYaw (BYAW_MODE = 1)
+#
+# WICHTIG: Diese Datei ersetzt die aelteren Test-Configs
+#   - openfuselage_vtail_no_rudder.parm   (Vor-BionicYaw-Test, kein Yaw)
+#   - openfuselage_vtail_ruddervator.parm (ArduPilot-natives VTail-Mixing,
+#                                          Function 79/80, umgeht AP_BionicYaw)
+#   - openfuselage_rotating_tail.parm     (alter Lua-Prototyp, siehe
+#                                          rotating_tail_mixer.lua - obsolet,
+#                                          keine BYAW_*-Parameter)
+# Keine der drei alten Dateien setzt einen einzigen BYAW_*-Parameter.
+# Diese Datei ist die erste, die tatsaechlich zum aktuellen C++-Code passt.
+# =============================================================
+
+# -------------------------------------------------------------
+# AP_BionicYaw aktivieren, Modus = ROTATING_TAIL
+# -------------------------------------------------------------
+BYAW_ENABLE,1
+BYAW_MODE,1          # 1 = ROTATING_TAIL (Phase 3)
+BYAW_ROT_MAX,45      # max. Boom-Rotation in Grad, +/- 45
+BYAW_ROT_FN,1        # Boom-Servo auf Scripting1 (siehe SERVO6_FUNCTION unten)
+
+# Turn-Coordination-Gains (BYAW_YAW_GAIN/ROLL_GAIN/PITCH_GAIN) gelten nur
+# im DIFFERENTIAL_VTAIL-Zweig (update()) und sind in ROTATING_TAIL-Mode
+# inaktiv/totes Gewicht - bewusst auf Default belassen.
+
+# Roll-Yaw-Kopplungskompensation (Phase 3.2): 0 = aus. Erst nach dem
+# Yaw-Step-Tuningtest (siehe Testplan) hochdrehen, Vorzeichen pruefen!
+BYAW_RC_GAIN,0
+
+# -------------------------------------------------------------
+# Servo-Zuordnung
+# -------------------------------------------------------------
+
+# Querruder (Roll) - normale Aileron-Function, unveraendert
+SERVO1_FUNCTION,4    # Aileron
+SERVO1_REVERSED,0
+SERVO1_MIN,1100
+SERVO1_MAX,1900
+SERVO1_TRIM,1500
+
+SERVO5_FUNCTION,4    # Aileron (zweite Seite, gegenlaeufig)
+SERVO5_REVERSED,1
+SERVO5_MIN,1100
+SERVO5_MAX,1900
+SERVO5_TRIM,1500
+
+# Elevons (Pitch) - jetzt klassisches Hoehenruder, BEIDE synchron auf
+# Function 19 (Elevator), NICHT mehr 79/80 (VTail)! Kein Differential.
+SERVO2_FUNCTION,19   # Elevator links
+SERVO2_REVERSED,0
+SERVO2_MIN,1100
+SERVO2_MAX,1900
+SERVO2_TRIM,1500
+
+SERVO4_FUNCTION,19   # Elevator rechts
+SERVO4_REVERSED,0
+SERVO4_MIN,1100
+SERVO4_MAX,1900
+SERVO4_TRIM,1500
+
+# Rotations-Servo des gesamten Tail-Booms -> Scripting1, passend zu
+# BYAW_ROT_FN = 1 oben
+SERVO6_FUNCTION,94   # Scripting1
+SERVO6_MIN,1100
+SERVO6_MAX,1900
+SERVO6_TRIM,1500
+
+# Throttle
+SERVO3_FUNCTION,3
+
+# -------------------------------------------------------------
+# WICHTIG: Kein physischer Rudder-Ausgang!
+# Yaw kommt ausschliesslich ueber die Boom-Rotation. k_rudder wird
+# intern trotzdem berechnet (aus RC-Input/Rate-Controller) und von
+# update_rotator() ausgelesen - dafuer braucht es KEINE physische
+# SERVOx_FUNCTION,21-Zuweisung.
+# -------------------------------------------------------------
+# (kein SERVOx_FUNCTION = 21 gesetzt)
+
+# -------------------------------------------------------------
+# Flugmodi fuer Test
+# -------------------------------------------------------------
+FLTMODE_CH,5
+FLTMODE1,0     # MANUAL     - wichtig fuer BYAW_RC_GAIN-Tuning ohne PID-Einfluss
+FLTMODE2,5     # FBWA
+FLTMODE3,6     # STABILIZE
+FLTMODE4,10    # AUTO
+FLTMODE5,11    # RTL
+FLTMODE6,0
+
+# NUR fuer SITL-Tests, NICHT fuer echten Flug!
+ARMING_CHECK,0

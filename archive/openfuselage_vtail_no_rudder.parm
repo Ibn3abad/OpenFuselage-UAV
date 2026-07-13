@@ -1,0 +1,79 @@
+# =============================================================
+# OpenFuselage-UAV Test-Parameter
+# Konfiguration: Querruder + flaches V-Tail (nur Elevator-Funktion,
+# KEIN aktiver Seiten-Ruder-Kanal)
+# =============================================================
+#
+# Anpassen: Kanalnummern (SERVOx_FUNCTION) an deine tatsächliche
+# Verkabelung/Mixer-Ausgabe anpassen! Die hier gewählten Nummern
+# (1,2,3,4,5) sind ein Beispiel-Setup.
+#
+# Servo-Funktionsnummern (Referenz):
+#   4  = Aileron
+#   3  = Throttle
+#   19 = Elevator
+#   21 = Seiten-Rudder (NICHT verwendet in diesem Setup)
+#
+# -------------------------------------------------------------
+# Steuerflächen-Zuordnung
+# -------------------------------------------------------------
+SERVO1_FUNCTION,4
+SERVO1_REVERSED,0
+SERVO1_MIN,1100
+SERVO1_MAX,1900
+SERVO1_TRIM,1500
+
+SERVO2_FUNCTION,19
+SERVO2_REVERSED,0
+SERVO2_MIN,1100
+SERVO2_MAX,1900
+SERVO2_TRIM,1500
+
+SERVO3_FUNCTION,3
+SERVO3_MIN,1000
+SERVO3_MAX,2000
+SERVO3_TRIM,1000
+
+SERVO4_FUNCTION,19
+SERVO4_REVERSED,1
+SERVO4_MIN,1100
+SERVO4_MAX,1900
+SERVO4_TRIM,1500
+
+SERVO5_FUNCTION,4
+SERVO5_REVERSED,1
+SERVO5_MIN,1100
+SERVO5_MAX,1900
+SERVO5_TRIM,1500
+
+# -------------------------------------------------------------
+# Rudder deaktivieren / nicht zuweisen
+# -------------------------------------------------------------
+# Kein SERVOx_FUNCTION = 21 gesetzt -> kein physischer Seiten-Ruderausgang.
+# Rudder-Mixing-Parameter bleiben daher wirkungslos, werden aber
+# der Vollständigkeit halber neutral belassen:
+KFF_RDDRMIX,0
+
+# -------------------------------------------------------------
+# Grundlegende Flugmodi für ersten Test (Kanal 5 z.B. als Mode-Kanal)
+# -------------------------------------------------------------
+FLTMODE_CH,5
+FLTMODE1,0     # MANUAL
+FLTMODE2,5     # FBWA
+FLTMODE3,10    # AUTO
+FLTMODE4,6     # STABILIZE
+FLTMODE5,11    # RTL
+FLTMODE6,0     # MANUAL
+
+# -------------------------------------------------------------
+# Arming-Erleichterung NUR für SITL-Tests (NICHT für echten Flug!)
+# -------------------------------------------------------------
+ARMING_CHECK,0
+
+# -------------------------------------------------------------
+# SITL Modell
+# -------------------------------------------------------------
+# Für den ersten Funktionstest reicht das Standard "plane"-Modell,
+# da die Servo-Funktionszuordnung unabhängig vom Physik-Modell ist.
+# Feinere Aerodynamik-Anpassung (V-Tail-Fläche, Dihedral) erfolgt
+# später ggf. über ein eigenes JSBSim/Model-File.
