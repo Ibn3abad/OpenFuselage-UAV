@@ -1118,6 +1118,15 @@ void Plane::bionicyaw_update(void)
         const float yaw_cd = SRV_Channels::get_output_scaled(SRV_Channel::k_rudder);
         const float rot_cd = g2.bionicyaw.update_rotator(yaw_cd);
         SRV_Channels::set_output_scaled(fn, rot_cd);
+
+        // Phase 3.1: Pitch-Kompensation basierend auf aktuellem Rotationswinkel
+        const float pitch_comp_cd = g2.bionicyaw.update_rotating_pitch_comp(pitch_cd, rot_cd);
+        SRV_Channels::set_output_scaled(SRV_Channel::k_elevator, pitch_comp_cd);
+
+        // Phase 3.2: Roll-Kompensation basierend auf aktuellem Rotationswinkel
+        const float roll_cd = SRV_Channels::get_output_scaled(SRV_Channel::k_aileron);
+        const float roll_comp_cd = g2.bionicyaw.update_rotating_roll_comp(roll_cd, rot_cd);
+        SRV_Channels::set_output_scaled(SRV_Channel::k_aileron, roll_comp_cd);
         break;
     }
 

@@ -133,3 +133,37 @@ float AP_BionicYaw::update_rotator(float yaw) const
 
     return constrain_float(yaw, -max_cd, max_cd);
 }
+
+// Phase 3.1: 
+float AP_BionicYaw::update_rotating_pitch_comp(float pitch_cd, float rot_cd) const
+{
+    if (_enabled <= 0) {
+        return pitch_cd;
+    }
+
+    // rot_cd kommt im gleichen centidegree-Maßstab wie update_rotator() liefert
+    const float rot_rad = radians(rot_cd * 0.01f);
+    float cos_phi = cosf(rot_rad);
+
+    // Schutz gegen Division nahe 0 (bei BYAW_ROT_MAX nahe 90°, bei dir max 45°
+    // ist cos(45°) = 0.707, also unkritisch, aber sauberer Code klemmt trotzdem)
+    cos_phi = MAX(cos_phi, 0.3f);  // entspricht ~72.5° als Untergrenze
+
+    return constrain_float(pitch_cd / cos_phi, -4500.0f, 4500.0f);
+}
+
+// Phase 3.2: 
+float AP_BionicYaw::update_rotating_roll_comp(float roll_cd, float rot_cd) const
+{
+    if (_enabled <= 0 || is_zero(_roll_couple_gain)) {
+        return roll_cd;   // Kopplung unbekannt/nicht getuned -> nichts tun
+    }
+
+    const float rot_rad = radians(rot_cd * 0.01f);
+    const float sin_phi = sinf(rot_rad);
+
+    // Vorzeichen ist TBD - siehe Tuning-Hinweis unten!
+    const float roll_corr_cd = -_roll_couple_gain * sin_phi * 4500.0f;
+
+    return constrain_float(roll_cd + roll_corr_cd, -4500.0f, 4500.0f);
+}
