@@ -72,6 +72,13 @@ const AP_Param::GroupInfo AP_BionicYaw::var_info[] = {
     // @User: Standard
     AP_GROUPINFO("ROT_FN", 6, AP_BionicYaw, _rot_fn, 1),
 
+    // @Param: RC_GAIN
+    // @DisplayName: BionicYaw rotator roll-coupling compensation gain
+    // @Description: Feedforward gain applied to the aileron channel to compensate for the roll moment induced by the rotating tail-boom's lateral force component in ROTATING_TAIL mode. 0 disables the compensation. Sign and magnitude must be tuned per airframe (see BYAW_ROT_MAX and tail vertical offset from the roll axis).
+    // @Range: -2.0 2.0
+    // @User: Advanced
+    AP_GROUPINFO("RC_GAIN", 7, AP_BionicYaw, _roll_couple_gain, 0.0f),
+
     AP_GROUPEND
 };
 
@@ -134,35 +141,36 @@ float AP_BionicYaw::update_rotator(float yaw) const
     return constrain_float(yaw, -max_cd, max_cd);
 }
 
-// Phase 3.1: 
+// Phase 3.1: pitch effectiveness compensation for tail-boom rotation
 float AP_BionicYaw::update_rotating_pitch_comp(float pitch_cd, float rot_cd) const
 {
     if (_enabled <= 0) {
         return pitch_cd;
     }
 
-    // rot_cd kommt im gleichen centidegree-Maßstab wie update_rotator() liefert
+    // rot_cd is in the same centidegree scale that update_rotator() returns
     const float rot_rad = radians(rot_cd * 0.01f);
     float cos_phi = cosf(rot_rad);
 
-    // Schutz gegen Division nahe 0 (bei BYAW_ROT_MAX nahe 90°, bei dir max 45°
-    // ist cos(45°) = 0.707, also unkritisch, aber sauberer Code klemmt trotzdem)
-    cos_phi = MAX(cos_phi, 0.3f);  // entspricht ~72.5° als Untergrenze
+    // guard against division blowing up near 90 deg; at the current
+    // BYAW_ROT_MAX of 45 deg, cos(45) = 0.707, so this floor is inactive
+    // for now, but keeps things safe if ROT_MAX is raised later
+    cos_phi = MAX(cos_phi, 0.3f);  // corresponds to ~72.5 deg as a floor
 
     return constrain_float(pitch_cd / cos_phi, -4500.0f, 4500.0f);
 }
 
-// Phase 3.2: 
+// Phase 3.2: roll-yaw coupling compensation for tail-boom rotation
 float AP_BionicYaw::update_rotating_roll_comp(float roll_cd, float rot_cd) const
 {
     if (_enabled <= 0 || is_zero(_roll_couple_gain)) {
-        return roll_cd;   // Kopplung unbekannt/nicht getuned -> nichts tun
+        return roll_cd;   // coupling unknown/untuned -> leave roll alone
     }
 
     const float rot_rad = radians(rot_cd * 0.01f);
     const float sin_phi = sinf(rot_rad);
 
-    // Vorzeichen ist TBD - siehe Tuning-Hinweis unten!
+    // sign is TBD - determine during flight test tuning (see notes)
     const float roll_corr_cd = -_roll_couple_gain * sin_phi * 4500.0f;
 
     return constrain_float(roll_cd + roll_corr_cd, -4500.0f, 4500.0f);
